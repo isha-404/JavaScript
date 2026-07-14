@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Regex Email Validator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 40px; display: flex; justify-content: center; }
+        .wrapper { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        h2 { margin-top: 0; color: #0f172a; text-align: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
+        label { display: block; margin: 15px 0 6px; font-weight: 600; color: #334155; }
+        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 15px; font-family: inherit; }
+        input:focus { border-color: #3b82f6; outline: none; }
+        button { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background: #2563eb; }
+        #emailFeedback { font-size: 14px; font-weight: 600; margin-top: 10px; text-align: center; }
+        .valid { color: #16a34a; }
+        .invalid { color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h2>Email Validator</h2>
+    
+    <!-- Kept only the Email Validation Field -->
+    <label for="emailInput">Enter Email Address</label>
+    <input type="text" id="emailInput" placeholder="e.g., user@domain.com">
+    <div id="emailFeedback"></div>
+
+    <button onclick="validateEmailOnly()">Validate Email</button>
+</div>
+
+<script>
+function validateEmailOnly() {
+    // 1. Fetch and clean up email input
+    const emailStr = document.getElementById('emailInput').value.trim();
+    const emailFeedback = document.getElementById('emailFeedback');
+    
+    // 2. Strict email validation regex pattern
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    // 3. Clear message if completely empty, otherwise evaluate pattern matches
+    if (emailStr === "") {
+        emailFeedback.textContent = "Please enter an email address first.";
+        emailFeedback.className = "invalid";
+    } else if (emailRegex.test(emailStr)) {
+        emailFeedback.textContent = "Valid Email Structure";
+        emailFeedback.className = "valid";
+    } else {
+        emailFeedback.textContent = "Invalid Email Structure";
+        emailFeedback.className = "invalid";
+    }
+}
+</script>
+
+</body>
+</html>
