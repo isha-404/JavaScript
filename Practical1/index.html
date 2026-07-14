@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRACTICAL 1</title>
+
+    <script>
+            console.log("Internal Loaded");
+            window.onload = () => {
+                document.getElementById("msg").innerText = "Welcome to the Lab!";
+
+                console.table({
+                    Browser: navigator.userAgent,
+                    Lang: navigator.language
+                });
+            };
+    </script>
+</head>
+<body>
+    <h1 id= msg></h1>
+
+    <button onclick = "console.log('Inline Log Button Clicked!')">Inline Log Button</button>
+    <button onclick = "testTrace()">Trace</button>
+    <script src = "script.js"></script>
+</body>
+</html>
