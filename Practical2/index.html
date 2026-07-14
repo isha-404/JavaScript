@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Billing Calculator</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background: #f4f4f9; }
+        .calculator { background: white; padding: 20px; border-radius: 8px; max-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 96%; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #receipt { margin-top: 20px; white-space: pre-wrap; font-family: monospace; background: #222; color: #fff; padding: 15px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h3>Billing Calculator</h3>
+    <div class="input-group">
+        <label>Customer Name</label>
+        <input type="text" id="custName" value="Sam">
+    </div>
+    <div class="input-group">
+        <label>Price per Item (Rs.)</label>
+        <input type="number" id="price" value="25.00">
+    </div>
+    <div class="input-group">
+        <label>Quantity</label>
+        <input type="number" id="quantity" value="3">
+    </div>
+    <button onclick="generateReceipt()">Calculate & Print</button>
+</div>
+
+<div id="receipt" style="display:none;"></div>
+
+<script>
+    function generateReceipt() {
+        const TAX_PERCENT = 0.07; 
+        let couponDiscount = 3.00;
+
+        const userInput = {
+            name: document.getElementById('custName').value,
+            itemPrice: parseFloat(document.getElementById('price').value),
+            qty: parseInt(document.getElementById('quantity').value)
+        };
+
+        const { name, itemPrice, qty } = userInput;
+
+        if (qty > 10) {
+            couponDiscount = 15.00;
+        }
+
+        // Logic
+        const subtotal = itemPrice * qty;
+        const tax = subtotal * TAX_PERCENT;
+        const grandTotal = subtotal + tax - couponDiscount;
+
+        const receiptTemplate = `
+===================================
+        RECEIPT SUMMARY            
+===================================
+Customer:   ${name}
+Quantity:   ${qty} pc(s)
+Rate:       Rs ${itemPrice.toFixed(2)}
+
+Subtotal:   Rs ${subtotal.toFixed(2)}
+Tax (10%):  Rs ${tax.toFixed(2)}
+Discount:  -Rs ${couponDiscount.toFixed(2)}
+-----------------------------------
+Total Due:  Rs ${grandTotal.toFixed(2)}
+===================================`;
+
+        // Display results
+        const receiptDiv = document.getElementById('receipt');
+        receiptDiv.textContent = receiptTemplate;
+        receiptDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
