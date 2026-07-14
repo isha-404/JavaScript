@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Grading System</title>
+    <script>if (marksInput === "" || isNaN(marks) || marks < 0 || marks > 100)</script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background: #f0f2f5; }
+        .container { background: white; padding: 25px; border-radius: 10px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #218838; }
+        .error { color: #dc3545; font-size: 14px; margin-top: 5px; display: none; font-weight: 500; }
+        #result-box { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; text-align: center; font-size: 18px; font-weight: bold; }
+        .pass { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Grading System</h2>
+    
+    <div class="form-group">
+        <label for="studentName">Student Name</label>
+        <input type="text" id="studentName" placeholder="Enter student's name">
+        <div id="nameError" class="error">Please enter a valid student name.</div>
+    </div>
+
+    <div class="form-group">
+        <label for="marks">Marks Obtained (0 - 100)</label>
+        <input type="number" id="marks" placeholder="Enter marks (e.g. 85)" min="0" max="100">
+        <div id="marksError" class="error">Marks must be a number between 0 and 100.</div>
+    </div>
+
+    <button onclick="processGrade()">Calculate Grade</button>
+
+    <div id="result-box"></div>
+</div>
+
+<script>
+function processGrade() {
+
+    const nameInput = document.getElementById('studentName').value.trim();
+    const marksInput = document.getElementById('marks').value.trim();
+    
+    const nameError = document.getElementById('nameError');
+    const marksError = document.getElementById('marksError');
+    const resultBox = document.getElementById('result-box');
+
+    nameError.style.display = 'none';
+    marksError.style.display = 'none';
+    resultBox.style.display = 'none';
+
+    let isValid = true;
+
+    if (nameInput === "" || !isNaN(nameInput)) {
+        nameError.style.display = 'block';
+        isValid = false;
+    }
+
+    const marks = Number(marksInput);
+    if (marksInput === "" || isNaN(marks) || marks < 0 || marks > 100) {
+        marksError.style.display = 'block';
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    let grade = "";
+    let status = "";
+    let cssClass = "pass";
+
+    if (marks >= 90 && marks <= 100) {
+        grade = "A+ (Excellent)";
+        status = "PASSED";
+    } else if (marks >= 80 && marks < 90) {
+        grade = "A (Very Good)";
+        status = "PASSED";
+    } else if (marks >= 70 && marks < 80) {
+        grade = "B (Good)";
+        status = "PASSED";
+    } else if (marks >= 60 && marks < 70) {
+        grade = "C (Satisfactory)";
+        status = "PASSED";
+    } else if (marks >= 50 && marks < 60) {
+        grade = "D (Pass)";
+        status = "PASSED";
+    } else {
+        grade = "F (Fail)";
+        status = "FAILED";
+        cssClass = "fail"; 
+    }
+
+    resultBox.className = cssClass; 
+    resultBox.innerHTML = `
+        ${nameInput.toUpperCase()}<br>
+        Score: ${marks}/100 <br>
+        Grade: ${grade} <br>
+        Status: ${status}
+    `;
+    resultBox.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
