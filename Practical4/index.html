@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Palindrome Checker & Closures</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; margin: 40px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 420px; }
+        h2 { margin-top: 0; color: #2b303a; font-size: 24px; text-align: center; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #4a5568; }
+        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: border 0.2s; }
+        input:focus { border-color: #4f46e5; outline: none; }
+        button { width: 100%; padding: 12px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #4338ca; }
+        .meta-text { font-size: 13px; color: #718096; text-align: center; margin-top: 8px; font-style: italic; }
+        #output { margin-top: 20px; padding: 15px; border-radius: 6px; display: none; text-align: center; font-weight: bold; font-size: 16px; }
+        .success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .fail { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .error-banner { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Palindrome Checker</h2>
+    
+    <div class="input-group">
+        <label for="textInput">Enter Text / Number</label>
+        <input type="text" id="textInput" placeholder="e.g., Racecar or 12321">
+    </div>
+
+    <button onclick="handleCheck()">Verify Text</button>
+    <div id="counterInfo" class="meta-text">Total verifications in this session: 0</div>
+
+    <div id="output"></div>
+</div>
+
+<script>
+// --- 1. FUNCTION TYPES & CLOSURES ---
+// This factory function returns a closure. 
+// The 'sessionCount' variable is protected by lexical scope.
+function createTracker() {
+    let sessionCount = 0; // Local outer variable
+    
+    // Returns an inner function that maintains access to sessionCount
+    return function() {
+        sessionCount++;
+        return sessionCount;
+    };
+}
+
+// Instantiate the closure
+const incrementCheckCount = createTracker();
+
+// Arrow Function: Quick syntax for a small, pure string cleaner utility
+const cleanString = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+
+// --- 2. THE MAIN CALCULATION FUNCTION ---
+function verifyPalindrome(inputData) {
+    // --- 3. TRY...CATCH ERROR HANDLING ---
+    try {
+        // Enforce strict type constraints to safely test runtime catching
+        if (typeof inputData !== "string") {
+            throw new TypeError("System error: Input data must explicitly be a valid text string.");
+        }
+
+        const clean = cleanString(inputData);
+        
+        if (clean === "") {
+            throw new Error("Input cannot be completely empty or purely symbols.");
+        }
+
+        // Check if string matches its reversed version
+        const reversed = clean.split('').reverse().join('');
+        return clean === reversed;
+
+    } catch (error) {
+        // Bubble the specific error message upward to be dealt with by the UI layer
+        throw error;
+    }
+}
+
+
+// --- 4. UI CONTROLLER FUNCTION ---
+function handleCheck() {
+    const rawInput = document.getElementById('textInput').value;
+    const outputDiv = document.getElementById('output');
+    const counterDiv = document.getElementById('counterInfo');
+
+    // Reset styles
+    outputDiv.style.display = 'none';
+    outputDiv.className = '';
+
+    try {
+        // Pass the raw value into our checker logic
+        const isPalindrome = verifyPalindrome(rawInput);
+        
+        // If execution reaches here, no errors were thrown. Update closure tracking.
+        const currentCount = incrementCheckCount();
+        counterDiv.textContent = `Total verifications in this session: ${currentCount}`;
+
+        // Render success/fail UI
+        if (isPalindrome) {
+            outputDiv.textContent = `"${rawInput}" is a palindrome!`;
+            outputDiv.classList.add('success');
+        } else {
+            outputDiv.textContent = `"${rawInput}" is NOT a palindrome.`;
+            outputDiv.classList.add('fail');
+        }
+
+    } catch (err) {
+        // Gracefully catch standard validation and runtime type errors here
+        outputDiv.textContent = `⚠️ Error: ${err.message}`;
+        outputDiv.classList.add('error-banner');
+    }
+
+    outputDiv.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
