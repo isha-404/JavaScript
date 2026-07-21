@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM-Driven To-Do App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+        .todo-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #add-btn { background-color: #28a745; color: white; }
+        .edit-btn { background-color: #ffc107; margin-right: 5px; }
+        .delete-btn { background-color: #dc3545; color: white; }
+        .save-btn { background-color: #007bff; color: white; margin-right: 5px; }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        li.editing .task-text {
+            display: none;
+        }
+        li .edit-input {
+            display: none;
+            flex: 1;
+            margin-right: 10px;
+            padding: 4px;
+        }
+        li.editing .edit-input {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="todo-container">
+        <h2>My Tasks</h2>
+        <div class="input-section">
+            <input type="text" id="todo-input" placeholder="Add a new task...">
+            <button id="add-btn">Add Task</button>
+        </div>
+        <ul id="todo-list"></ul>
+    </div>
+
+    <script>
+        // 1. Select parent elements
+        const todoInput = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+
+        // 2. Add functionality
+        function addTask() {
+            const taskText = todoInput.value.trim();
+            if (taskText === "") return alert("Please enter a task!");
+
+            // Create the task container item
+            const li = document.createElement('li');
+
+            // Create spans and inner structures
+            const textSpan = document.createElement('span');
+            textSpan.className = 'task-text';
+            textSpan.textContent = taskText;
+
+            const editInput = document.createElement('input');
+            editInput.type = 'text';
+            editInput.className = 'edit-input';
+            editInput.value = taskText;
+
+            const buttonGroup = document.createElement('div');
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn';
+            editBtn.textContent = 'Edit';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Delete';
+
+            // Build the sub-tree component
+            buttonGroup.appendChild(editBtn);
+            buttonGroup.appendChild(deleteBtn);
+            li.appendChild(textSpan);
+            li.appendChild(editInput);
+            li.appendChild(buttonGroup);
+
+            // Append new node to the parent unordered list
+            todoList.appendChild(li);
+
+            // Clear main input field
+            todoInput.value = '';
+        }
+
+        // 3. Event Listeners for actions
+        addBtn.addEventListener('click', addTask);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        // 4. Handle Edit, Save, and Delete via Event Delegation & DOM Traversal
+        todoList.addEventListener('click', (event) => {
+            const target = event.target;
+
+            // DELETE FEATURE (Using DOM node removal)
+            if (target.classList.contains('delete-btn')) {
+                // Traversal: Find the closest list item ancestor and drop it
+                const listItem = target.closest('li');
+                listItem.remove(); 
+            }
+
+            // EDIT / SAVE FEATURE (Using DOM Traversal & property updates)
+            if (target.classList.contains('edit-btn') || target.classList.contains('save-btn')) {
+                const listItem = target.closest('li');
+                const textSpan = listItem.querySelector('.task-text');
+                const editInput = listItem.querySelector('.edit-input');
+
+                if (!listItem.classList.contains('editing')) {
+                    // Switch to edit mode
+                    listItem.classList.add('editing');
+                    target.textContent = 'Save';
+                    target.className = 'save-btn';
+                    editInput.focus();
+                } else {
+                    // Save mode: Update properties based on input changes
+                    const updatedText = editInput.value.trim();
+                    if (updatedText !== "") {
+                        textSpan.textContent = updatedText;
+                        listItem.classList.remove('editing');
+                        target.textContent = 'Edit';
+                        target.className = 'edit-btn';
+                    } else {
+                        alert("Task cannot be empty!");
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
