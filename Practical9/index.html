@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preference Storage Demo</title>
+    <style>
+        /* Define theme variables */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --btn-bg: #1a1a1a;
+            --btn-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --btn-bg: #ffffff;
+            --btn-text: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="themeToggle">Switch Theme</button>
+    <p id="sessionStatus">Checking session tracking...</p>
+
+    <script>
+    const themeToggle = document.getElementById('themeToggle');
+const sessionStatus = document.getElementById('sessionStatus');
+
+// 1. Check localStorage for an existing theme preference on load
+const savedTheme = localStorage.getItem('userTheme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+// 2. Track page interactions using sessionStorage
+let clickCount = parseInt(sessionStorage.getItem('sessionClicks')) || 0;
+updateSessionText();
+
+// 3. Handle theme toggle click
+themeToggle.addEventListener('click', () => {
+    // Toggle theme logic
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Save preference to localStorage (persists indefinitely)
+    localStorage.setItem('userTheme', newTheme);
+
+    // Update and save session clicks (wipes when tab closes)
+    clickCount++;
+    sessionStorage.setItem('sessionClicks', clickCount);
+    updateSessionText();
+});
+
+function updateSessionText() {
+    sessionStatus.innerText = `You have toggled the theme ${clickCount} times during this tab session.`;
+}
+</script>
+</body>
+</html>
